@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#25110f" />
+  <meta name="description" content="Casa Raíz — contemporary Latin American cuisine rooted in tradition, craft, and hospitality." />
+  <title>Casa Raíz — Cocina Latinoamericana</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#F3EBDD',
+            paper: '#F8F2E8',
+            burgundy: '#6E1E1D',
+            wine: '#451512',
+            terracotta: '#A34F37',
+            charcoal: '#201C19',
+            olive: '#69705A',
+            gold: '#C79A4A',
+          },
+          fontFamily: {
+            display: ['Cormorant Garamond', 'serif'],
+            sans: ['DM Sans', 'sans-serif'],
+          },
+          boxShadow: {
+            soft: '0 18px 50px rgba(38, 21, 16, .10)',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-paper text-charcoal font-sans antialiased overflow-x-hidden">
+  <div class="grain" aria-hidden="true"></div>
+
+  <header id="site-header" class="fixed inset-x-0 top-0 z-50 transition-all duration-500">
+    <div class="mx-auto max-w-[1440px] px-5 lg:px-10">
+      <div class="nav-shell mt-4 flex items-center justify-between rounded-2xl px-4 py-3 lg:px-6">
+        <a href="#home" class="group flex items-center gap-2 text-cream" aria-label="Casa Raíz home">
+          <span class="font-display text-3xl leading-none">Casa</span>
+          <span class="text-gold text-lg">✣</span>
+          <span class="font-display text-3xl leading-none">Raíz</span>
+        </a>
+
+        <nav class="hidden items-center gap-7 text-sm text-white/85 lg:flex" aria-label="Primary navigation">
+          <a class="nav-link active" href="#home">Home</a>
+          <a class="nav-link" href="#menu">Menu</a>
+          <a class="nav-link" href="#story">Our Story</a>
+          <a class="nav-link" href="#reservations">Reservations</a>
+          <a class="nav-link" href="#events">Events</a>
+          <a class="nav-link" href="#visit">Contact</a>
+        </nav>
+
+        <div class="hidden items-center gap-4 lg:flex">
+          <a href="#reservations" class="btn-primary px-5 py-3 text-sm">Reserve a Table</a>
+          <button class="text-xs font-semibold tracking-[.16em] text-white/75 hover:text-white" aria-label="Change language">EN / ES</button>
+        </div>
+
+        <button id="menu-toggle" class="grid h-11 w-11 place-items-center rounded-xl border border-white/15 bg-black/15 text-white lg:hidden" aria-label="Open menu" aria-expanded="false">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+
+      <div id="mobile-menu" class="mobile-menu mt-2 hidden rounded-2xl border border-white/10 bg-[#1a0e0c]/95 p-4 text-cream shadow-2xl backdrop-blur-xl lg:hidden">
+        <div class="grid gap-1">
+          <a class="mobile-link" href="#home">Home</a>
+          <a class="mobile-link" href="#menu">Menu</a>
+          <a class="mobile-link" href="#story">Our Story</a>
+          <a class="mobile-link" href="#reservations">Reservations</a>
+          <a class="mobile-link" href="#events">Events</a>
+          <a class="mobile-link" href="#visit">Contact</a>
+        </div>
+        <a href="#reservations" class="btn-primary mt-3 block text-center">Reserve a Table</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="hero relative min-h-[760px] overflow-hidden text-white lg:min-h-[880px]">
+      <div class="absolute inset-0">
+        <img data-parallax class="hero-image h-full w-full object-cover" src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=2200&q=88" alt="Beautifully plated grilled steak in a warm, candlelit restaurant" />
+        <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(17,8,6,.88)_0%,rgba(17,8,6,.58)_44%,rgba(17,8,6,.22)_72%,rgba(17,8,6,.40)_100%)]"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,5,4,.56)_0%,transparent_35%,rgba(8,5,4,.34)_100%)]"></div>
+      </div>
+
+      <div class="relative mx-auto flex min-h-[760px] max-w-[1440px] items-center px-6 pb-16 pt-32 lg:min-h-[880px] lg:px-10 lg:pt-40">
+        <div class="max-w-3xl" data-reveal="left">
+          <p class="eyebrow text-gold">Cocina latinoamericana contemporánea</p>
+          <h1 class="mt-5 max-w-[760px] font-display text-[clamp(3.5rem,7vw,7.3rem)] font-semibold leading-[.86] tracking-[-.045em] text-[#fff7ea]">
+            Sabores con raíces.<br />Momentos para recordar.
+          </h1>
+          <p class="mt-7 max-w-xl text-base leading-7 text-white/78 lg:text-lg">
+            Cocina latinoamericana contemporánea que celebra ingredientes de temporada, técnicas tradicionales y hospitalidad inolvidable.
+          </p>
+          <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+            <a href="#reservations" class="btn-primary min-w-[170px] text-center">Reserve a Table</a>
+            <a href="#menu" class="btn-ghost min-w-[170px] text-center">Explore the Menu</a>
+          </div>
+          <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-medium text-white/65">
+            <span class="inline-flex items-center gap-2"><span class="text-gold">⌖</span> Brooklyn, NY</span>
+            <span>Tue–Sun from 5 PM</span>
+          </div>
+        </div>
+
+        <a href="#dishes" class="scroll-cue absolute bottom-8 left-1/2 -translate-x-1/2 text-center text-[10px] uppercase tracking-[.28em] text-white/55" aria-label="Scroll to featured dishes">
+          <span class="block">Scroll</span>
+          <span class="mx-auto mt-2 block h-9 w-px bg-gradient-to-b from-gold to-transparent"></span>
+        </a>
+      </div>
+    </section>
+
+    <section id="dishes" class="section-pad bg-paper">
+      <div class="mx-auto max-w-[1440px] px-6 lg:px-10">
+        <div class="grid items-stretch gap-5 lg:grid-cols-[.75fr_2.25fr]">
+          <div class="flex flex-col justify-between py-4 lg:pr-7" data-reveal="up">
+            <div>
+              <p class="eyebrow text-burgundy">Platos destacados</p>
+              <h2 class="section-title mt-3">Hechos con<br />intención.</h2>
+              <p class="mt-5 max-w-sm text-sm leading-6 text-charcoal/65">Platos que honran nuestras raíces y los ingredientes que nos conectan.</p>
+            </div>
+            <a href="#menu" class="btn-outline mt-8 w-fit">View Full Menu</a>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <article class="dish-card group" data-reveal="up" style="--delay:.04s">
+              <div class="overflow-hidden rounded-[1.1rem]">
+                <img class="dish-image" src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=86" alt="Grilled beef with chimichurri" />
+              </div>
+              <div class="px-1 pb-1 pt-4">
+                <h3>Carne Asada con Chimichurri</h3>
+                <p>Entraña a la parrilla, chimichurri de hierbas, papas criollas.</p>
+                <div class="mt-4 flex items-center justify-between"><span class="price">$32</span><span class="diet-dot">GF</span></div>
+              </div>
+            </article>
+            <article class="dish-card group" data-reveal="up" style="--delay:.08s">
+              <div class="overflow-hidden rounded-[1.1rem]">
+                <img class="dish-image" src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=86" alt="Fresh market-style ceviche" />
+              </div>
+              <div class="px-1 pb-1 pt-4">
+                <h3>Ceviche del Mercado</h3>
+                <p>Pescado del día, leche de tigre, camote, maíz cancha.</p>
+                <div class="mt-4 flex items-center justify-between"><span class="price">$24</span><span class="diet-dot">GF</span></div>
+              </div>
+            </article>
+            <article class="dish-card group" data-reveal="up" style="--delay:.12s">
+              <div class="overflow-hidden rounded-[1.1rem]">
+                <img class="dish-image" src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=86" alt="Mole-inspired plated entree" />
+              </div>
+              <div class="px-1 pb-1 pt-4">
+                <h3>Mole de Temporada</h3>
+                <p>Pollo orgánico, mole de chiles secos, ajonjolí, arroz.</p>
+                <div class="mt-4 flex items-center justify-between"><span class="price">$28</span><span class="diet-dot">DF</span></div>
+              </div>
+            </article>
+            <article class="dish-card group" data-reveal="up" style="--delay:.16s">
+              <div class="overflow-hidden rounded-[1.1rem]">
+                <img class="dish-image" src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=900&q=86" alt="Wrapped corn masa dish" />
+              </div>
+              <div class="px-1 pb-1 pt-4">
+                <h3>Tamal de Maíz Azul</h3>
+                <p>Relleno de frijol negro, salsa verde, crema, queso fresco.</p>
+                <div class="mt-4 flex items-center justify-between"><span class="price">$16</span><span class="diet-dot">V</span></div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="story" class="bg-[#eee2d2]">
+      <div class="grid lg:grid-cols-3">
+        <div class="media-panel min-h-[480px] lg:min-h-[590px]" data-reveal="left">
+          <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1400&q=88" alt="Chef preparing food in the kitchen" />
+        </div>
+        <div class="flex items-center px-7 py-16 lg:px-14" data-reveal="up">
+          <div>
+            <p class="eyebrow text-burgundy">Nuestra historia</p>
+            <h2 class="section-title mt-3">Raíces que nos guían.<br />Sabores que nos unen.</h2>
+            <p class="mt-6 text-sm leading-7 text-charcoal/70">Casa Raíz nace del deseo de compartir la riqueza de América Latina a través de una cocina honesta y contemporánea. Nos inspiramos en las tradiciones de nuestras familias, en los mercados, en los viajes y en el respeto profundo por la tierra.</p>
+            <blockquote class="mt-8 border-l border-burgundy/30 pl-5 font-display text-3xl leading-tight text-burgundy">“Cada plato honra la memoria,<br />la tierra y la mesa compartida.”</blockquote>
+            <a href="#chef" class="btn-outline mt-8">Our Story</a>
+          </div>
+        </div>
+        <div class="media-panel min-h-[480px] lg:min-h-[590px]" data-reveal="right">
+          <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1400&q=88" alt="Hands shaping masa on a leaf" />
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-charcoal py-8 text-white lg:py-12">
+      <div class="mx-auto grid max-w-[1440px] gap-7 px-6 lg:grid-cols-[.72fr_2.28fr] lg:px-10">
+        <div class="self-center" data-reveal="left">
+          <p class="eyebrow text-gold">Más que comida,<br />una experiencia</p>
+          <p class="mt-5 max-w-sm text-sm leading-7 text-white/65">Un espacio cálido y vibrante para compartir, celebrar y crear recuerdos. Música con raíces, cócteles que cuentan historias y un equipo que te hace sentir como en casa.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <figure class="experience-image col-span-2 md:col-span-2" data-reveal="up"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c5?auto=format&fit=crop&w=1500&q=88" alt="Warm dining room" /></figure>
+          <figure class="experience-image" data-reveal="up" style="--delay:.06s"><img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=900&q=88" alt="House cocktail" /></figure>
+          <figure class="experience-image" data-reveal="up" style="--delay:.1s"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1000&q=88" alt="Guests sharing food" /></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="chef" class="section-pad bg-paper">
+      <div class="mx-auto max-w-[1440px] px-6 lg:px-10">
+        <div class="grid items-center gap-10 lg:grid-cols-[.9fr_1.45fr_.45fr]">
+          <div class="overflow-hidden rounded-[1.5rem] shadow-soft" data-reveal="left">
+            <img class="h-[430px] w-full object-cover" src="https://images.unsplash.com/photo-1583394293214-28ded15ee548?auto=format&fit=crop&w=1100&q=88" alt="Executive Chef Elena Morales" />
+          </div>
+          <div data-reveal="up">
+            <p class="eyebrow text-burgundy">Nuestra filosofía</p>
+            <h2 class="mt-2 font-display text-5xl leading-none">Chef Elena Morales</h2>
+            <p class="mt-2 text-xs font-semibold uppercase tracking-[.16em] text-charcoal/55">Executive Chef</p>
+            <div class="my-5 h-px w-12 bg-burgundy"></div>
+            <p class="max-w-2xl text-sm leading-7 text-charcoal/70">Creo en una cocina que escucha la tierra y el tiempo. Trabajo con productores locales, técnicas tradicionales y una mirada contemporánea para crear platos que son honestos, vibrantes y profundamente humanos.</p>
+            <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div class="philosophy-chip"><span>♡</span><p>Ingredientes<br />de Temporada</p></div>
+              <div class="philosophy-chip"><span>✣</span><p>Técnicas<br />Tradicionales</p></div>
+              <div class="philosophy-chip"><span>⌘</span><p>Productores<br />Locales</p></div>
+              <div class="philosophy-chip"><span>♨</span><p>Cocina con<br />Propósito</p></div>
+            </div>
+          </div>
+          <div class="hidden justify-self-end text-[9rem] leading-none text-gold/25 lg:block" aria-hidden="true">❧</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="menu" class="border-y border-charcoal/10 bg-paper py-12 lg:py-16">
+      <div class="mx-auto max-w-[1440px] px-6 lg:px-10" data-reveal="up">
+        <div class="menu-grid">
+          <div class="menu-column"><h3>Para Compartir</h3><div class="menu-item"><span><b>Yuca Frita</b><small>smoked ají aioli</small></span><em>$12</em></div><div class="menu-item"><span><b>Empanadas de Hongos</b><small>queso fresco, chimichurri</small></span><em>$14</em></div><div class="menu-item"><span><b>Pulpo a la Parrilla</b><small>ají amarillo, aceitunas</small></span><em>$18</em></div></div>
+          <div class="menu-column"><h3>Entradas</h3><div class="menu-item"><span><b>Ceviche de Mercado</b><small>pescado del día, camote, maíz</small></span><em>$24</em></div><div class="menu-item"><span><b>Ensalada de Remolacha</b><small>queso de cabra, romero, miel</small></span><em>$15</em></div><div class="menu-item"><span><b>Tostada de Atún</b><small>aguacate, salsa macha</small></span><em>$16</em></div></div>
+          <div class="menu-column"><h3>Platos Principales</h3><div class="menu-item"><span><b>Short Rib Barbacoa</b><small>salsa tatemada, puré de camote</small></span><em>$34</em></div><div class="menu-item"><span><b>Pescado a la Plancha</b><small>cítricos, beurre blanc, vegetales</small></span><em>$31</em></div><div class="menu-item"><span><b>Pollo en Mole</b><small>arroz, frijoles, cebolla encurtida</small></span><em>$28</em></div></div>
+          <div class="menu-column"><h3>Cocktails</h3><div class="menu-item"><span><b>Raíz Negroni</b><small>mezcal, cacao, orange</small></span><em>$18</em></div><div class="menu-item"><span><b>Maracuyá Spritz</b><small>pisco, maracuyá, prosecco</small></span><em>$16</em></div><div class="menu-item"><span><b>Piña & Chile Margarita</b><small>tequila, piña, chile</small></span><em>$17</em></div></div>
+          <div class="menu-column"><h3>Desserts</h3><div class="menu-item"><span><b>Flan de Coco</b><small>burnt sugar, lime zest</small></span><em>$11</em></div><div class="menu-item"><span><b>Chocolate 70%</b><small>olive oil, sea salt</small></span><em>$12</em></div><div class="menu-item"><span><b>Tres Leches Cake</b><small>dulce de leche, berries</small></span><em>$17</em></div></div>
+        </div>
+        <div class="mt-10 text-center"><a href="#dishes" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.16em] text-burgundy">View Full Menu <span>→</span></a></div>
+      </div>
+    </section>
+
+    <section class="bar-section text-white">
+      <div class="mx-auto grid max-w-[1440px] gap-8 px-6 py-10 lg:grid-cols-[1fr_1fr_1.15fr] lg:px-10 lg:py-14">
+        <div class="overflow-hidden rounded-[1.4rem]" data-reveal="left"><img class="h-full min-h-[300px] w-full object-cover" src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=1400&q=88" alt="Cocktails at the bar" /></div>
+        <div class="self-center" data-reveal="up">
+          <p class="eyebrow text-gold">Del bar</p><h2 class="mt-3 font-display text-5xl">Bebidas con alma.</h2><p class="mt-5 text-sm leading-7 text-white/65">Cócteles de autor, macerados y tequilas artesanales, vinos seleccionados y creaciones sin alcohol que cuentan nuestras migraciones.</p><a href="#" class="btn-ghost mt-7 inline-block">Explore Drinks</a>
+        </div>
+        <div class="grid content-center gap-5 border-white/15 lg:border-l lg:pl-10" data-reveal="right">
+          <div class="bar-feature"><span>♜</span><p><b>Cócteles de Autor</b><small>Inspirados en nuestra herencia.</small></p></div>
+          <div class="bar-feature"><span>♨</span><p><b>Mezcales & Tequilas</b><small>Artesanales y de pequeños productores.</small></p></div>
+          <div class="bar-feature"><span>♢</span><p><b>Vinos</b><small>Selección de viñedos latinoamericanos.</small></p></div>
+          <div class="bar-feature"><span>◌</span><p><b>Sin Alcohol</b><small>Cítricos, frescos y sorprendentes.</small></p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="reservations" class="bg-[#efe4d5] py-8 lg:py-10">
+      <div class="mx-auto max-w-[1440px] px-6 lg:px-10">
+        <div class="reservation-shell" data-reveal="up">
+          <div class="lg:pr-6"><p class="font-display text-4xl text-burgundy">Tu mesa te espera.</p><p class="mt-1 text-xs text-charcoal/55">Reserva tu experiencia en Casa Raíz.</p><p class="mt-5 text-[11px] text-charcoal/55">⌖ Brooklyn, NY &nbsp;&nbsp; • &nbsp;&nbsp; Tue–Sun from 5 PM</p></div>
+          <label class="form-field"><span>Fecha</span><input type="date" value="2026-08-21" /></label>
+          <label class="form-field"><span>Hora</span><select><option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option><option>8:30 PM</option></select></label>
+          <label class="form-field"><span>Personas</span><select><option>2 persons</option><option>3 persons</option><option>4 persons</option><option>5 persons</option><option>6+ persons</option></select></label>
+          <button id="reserve-submit" class="btn-primary h-[58px] self-end">Find a Table</button>
+        </div>
+        <p id="reservation-note" class="mt-3 hidden text-center text-sm text-burgundy" role="status">Perfect — we’ll look for the best available tables.</p>
+      </div>
+    </section>
+
+    <section id="events" class="bg-paper">
+      <div class="grid lg:grid-cols-2">
+        <div class="min-h-[430px] overflow-hidden" data-reveal="left"><img class="h-full w-full object-cover" src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1600&q=88" alt="Private dining table set for an event" /></div>
+        <div class="flex items-center px-8 py-14 lg:px-20" data-reveal="right">
+          <div class="max-w-xl"><p class="eyebrow text-burgundy">Celebra con nosotros</p><h2 class="section-title mt-3">Eventos & Comidas Privadas</h2><p class="mt-5 text-sm leading-7 text-charcoal/68">Desde cenas íntimas hasta celebraciones grandes. Creamos experiencias personalizadas para cualquier ocasión.</p><a href="#visit" class="btn-primary mt-7 inline-block">Plan Your Event</a><div class="mt-7 grid gap-2 text-sm text-charcoal/70"><span>✓ Menús personalizados</span><span>✓ Grupos de 10 a 60 personas</span><span>✓ Eventos corporativos y sociales</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-pad bg-[#f5ede2]">
+      <div class="mx-auto max-w-[1300px] px-6 lg:px-10">
+        <div class="text-center" data-reveal="up"><p class="eyebrow text-burgundy">Un vistazo a nuestros invitados</p></div>
+        <div class="mt-9 grid gap-7 md:grid-cols-3">
+          <blockquote class="review-card" data-reveal="up"><div class="text-gold tracking-[.18em]">★★★★★</div><p>“Una joya en Brooklyn. La comida, el servicio y la vibra son impecables. Volvemos siempre.”</p><footer>— Ana B. <span>Guest Review</span></footer></blockquote>
+          <blockquote class="review-card" data-reveal="up" style="--delay:.05s"><div class="text-gold tracking-[.18em]">★★★★★</div><p>“Sabores auténticos con un toque moderno. Cada plato cuenta una historia.”</p><footer>— Javier R. <span>Guest Review</span></footer></blockquote>
+          <blockquote class="review-card" data-reveal="up" style="--delay:.1s"><div class="text-gold tracking-[.18em]">★★★★★</div><p>“El mejor ceviche que he probado fuera de Lima. Increíble atención.”</p><footer>— María G. <span>Guest Review</span></footer></blockquote>
+        </div>
+      </div>
+    </section>
+
+    <section class="gallery-strip bg-charcoal" aria-label="Casa Raíz gallery">
+      <div class="gallery-track">
+        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=82" alt="Plated food" />
+        <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=82" alt="Cocktail" />
+        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c5?auto=format&fit=crop&w=800&q=82" alt="Restaurant interior" />
+        <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=82" alt="Chef at work" />
+        <img src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=82" alt="Main dish" />
+        <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=82" alt="Dining room" />
+        <img src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=800&q=82" alt="Guests dining" />
+      </div>
+    </section>
+
+    <section id="visit" class="bg-paper py-12 lg:py-16">
+      <div class="mx-auto grid max-w-[1440px] gap-10 px-6 lg:grid-cols-[.72fr_1.28fr] lg:px-10">
+        <div data-reveal="left">
+          <h2 class="font-display text-5xl text-charcoal">Visítanos</h2>
+          <div class="mt-5 text-sm leading-7 text-charcoal/72"><p>123 Atlantic Ave<br />Brooklyn, NY 11201</p><p class="mt-3">(718) 555-1234<br />hola@casaraizbk.com</p><p class="mt-3 text-xs">Tue–Sun from 5 PM<br />Closed Monday</p></div>
+          <a class="btn-outline mt-7" href="https://maps.google.com/?q=123+Atlantic+Ave+Brooklyn+NY" target="_blank" rel="noreferrer">Get Directions</a>
+        </div>
+        <div class="map-card relative min-h-[330px] overflow-hidden rounded-[1.5rem] border border-charcoal/10" data-reveal="right">
+          <div class="map-grid absolute inset-0"></div>
+          <div class="absolute left-[60%] top-[46%] -translate-x-1/2 -translate-y-1/2 text-center">
+            <div class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-burgundy text-xl text-white shadow-xl">⌖</div>
+            <div class="mt-3 rounded-xl bg-paper/95 px-4 py-3 text-left shadow-soft backdrop-blur"><b class="font-display text-2xl text-burgundy">Casa Raíz</b><p class="mt-1 text-xs text-charcoal/60">123 Atlantic Ave<br />Brooklyn, NY 11201</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="newsletter relative overflow-hidden bg-[#e4d3bf] py-8">
+      <div class="absolute inset-y-0 left-0 hidden w-[30%] lg:block"><img class="h-full w-full object-cover opacity-70 mix-blend-multiply" src="https://images.unsplash.com/photo-1511081692775-05d0f180a065?auto=format&fit=crop&w=1200&q=75" alt="" /></div>
+      <div class="relative mx-auto grid max-w-[1440px] items-center gap-6 px-6 lg:grid-cols-[1fr_1.1fr] lg:px-10">
+        <div class="lg:pl-[30%]" data-reveal="left"><p class="eyebrow text-burgundy">Sé parte de nuestra comunidad</p><h2 class="mt-2 font-display text-4xl text-charcoal">Recibe noticias, eventos especiales<br />y menús de temporada.</h2></div>
+        <form id="newsletter-form" class="flex gap-0" data-reveal="right"><label class="sr-only" for="newsletter-email">Your email</label><input id="newsletter-email" type="email" required placeholder="Tu correo electrónico" class="min-w-0 flex-1 rounded-l-xl border border-charcoal/10 bg-paper px-5 py-4 text-sm outline-none focus:border-burgundy" /><button class="rounded-r-xl bg-burgundy px-6 py-4 text-sm font-semibold text-white transition hover:bg-wine">Suscribirme</button></form>
+      </div>
+      <p id="newsletter-note" class="relative mx-auto mt-3 hidden max-w-[1440px] px-6 text-right text-xs text-burgundy lg:px-10" role="status">¡Gracias! Te mantendremos al día.</p>
+    </section>
+  </main>
+
+  <footer class="bg-[#181614] py-10 text-white/70">
+    <div class="mx-auto max-w-[1440px] px-6 lg:px-10">
+      <div class="grid gap-10 border-b border-white/10 pb-9 md:grid-cols-2 lg:grid-cols-5">
+        <div class="lg:col-span-1"><div class="flex items-center gap-2 text-cream"><span class="font-display text-3xl">Casa</span><span class="text-gold">✣</span><span class="font-display text-3xl">Raíz</span></div><p class="mt-4 max-w-xs text-xs leading-6 text-white/45">Cocina latinoamericana contemporánea que celebra nuestras raíces con respeto, sabor y hospitalidad.</p><div class="mt-5 flex gap-4 text-gold"><span>◎</span><span>◉</span><span>♪</span></div></div>
+        <div><h3 class="footer-title">Navegación</h3><div class="footer-links"><a href="#home">Home</a><a href="#menu">Menu</a><a href="#story">Our Story</a><a href="#reservations">Reservations</a><a href="#events">Events</a><a href="#visit">Contact</a></div></div>
+        <div><h3 class="footer-title">Información</h3><div class="text-xs leading-6 text-white/45"><p>123 Atlantic Ave<br />Brooklyn, NY 11201</p><p class="mt-2">(718) 555-1234<br />hola@casaraizbk.com</p></div></div>
+        <div><h3 class="footer-title">Experiencias</h3><div class="footer-links"><a href="#reservations">Reservations</a><a href="#events">Private Events</a><a href="#bar">Gift Cards</a><a href="#story">Careers</a></div></div>
+        <div><h3 class="footer-title">Suscríbete</h3><p class="text-xs leading-6 text-white/45">Recibe noticias y eventos especiales.</p><form class="mt-4 flex"><input aria-label="Email for footer newsletter" type="email" placeholder="Tu correo electrónico" class="min-w-0 flex-1 border border-white/10 bg-white/5 px-3 py-3 text-xs outline-none" /><button class="bg-burgundy px-4 text-white">→</button></form><p class="mt-4 text-[10px] uppercase tracking-[.16em] text-gold">EN / ES</p></div>
+      </div>
+      <div class="flex flex-col gap-3 pt-6 text-[10px] text-white/35 sm:flex-row sm:items-center sm:justify-between"><p>© 2026 Casa Raíz. All rights reserved.</p><div class="flex gap-5"><a href="#">Accessibility</a><a href="#">Privacy Policy</a><a href="#">Terms & Conditions</a></div></div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
