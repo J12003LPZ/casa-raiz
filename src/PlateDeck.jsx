@@ -215,7 +215,7 @@ function PlateDetailsModal({ dish, nutrition, labels, onClose }) {
         </button>
 
         <div className="plate-modal-media">
-          <img src={dish.image} srcSet={unsplashSrcSet(dish.image)} sizes="(min-width: 900px) 42vw, calc(100vw - 40px)" loading="eager" decoding="async" alt={dish.alt} />
+          <img width="1200" height="800" src={dish.image} srcSet={unsplashSrcSet(dish.image)} sizes="(min-width: 900px) 42vw, calc(100vw - 40px)" loading="eager" decoding="async" alt={dish.alt} />
           <span>{labels.estimateBadge}</span>
         </div>
 
@@ -439,12 +439,12 @@ export default function PlateDeck({ dishes, labels, language }) {
                   aria-label={`${labels.viewDetails} ${dish.name}`}
                   onClick={(event) => handleImageClick(event, index)}
                 >
-                  <img src={dish.image} srcSet={unsplashSrcSet(dish.image)} sizes="(min-width: 900px) 42vw, calc(100vw - 40px)" loading="lazy" decoding="async" alt={dish.alt} draggable="false" />
+                  <img width="1200" height="800" src={dish.image} srcSet={unsplashSrcSet(dish.image)} sizes="(min-width: 900px) 42vw, calc(100vw - 40px)" loading="lazy" decoding="async" alt={dish.alt} draggable="false" />
                   <span className="plate-card-media-cue" aria-hidden="true">{labels.detailsCue}</span>
                 </button>
               ) : (
                 <div className="plate-card-media">
-                  <img src={dish.image} srcSet={unsplashSrcSet(dish.image)} sizes="(min-width: 900px) 42vw, calc(100vw - 40px)" loading="lazy" decoding="async" alt="" draggable="false" />
+                  <img width="1200" height="800" src={dish.image} srcSet={unsplashSrcSet(dish.image)} sizes="(min-width: 900px) 42vw, calc(100vw - 40px)" loading="lazy" decoding="async" alt="" draggable="false" />
                 </div>
               )}
               <div className="plate-card-copy">

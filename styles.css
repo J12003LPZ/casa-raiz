@@ -2,13 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/fonts/dm-sans-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant-garamond-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+}
+
 :root {
   --paper: #eef0eb;
   --paper-2: #e6e9e3;
   --paper-3: #dce2db;
   --ink: #172019;
   --forest: #26362c;
-  --muted: #626b64;
+  --muted: #5a625c;
   --line: rgba(23, 32, 25, 0.16);
   --line-strong: rgba(23, 32, 25, 0.3);
   --accent: #b64b3e;
@@ -529,7 +545,7 @@ img { display: block; max-width: 100%; }
 .footer-top h3 { margin: 0 0 16px; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
 .footer-top a { display: block; width: fit-content; margin: 8px 0; color: rgba(248, 248, 243, .72); font-size: 11px; }
 .footer-language { color: rgba(248, 248, 243, .54); font-size: 10px; }
-.footer-bottom { display: flex; justify-content: space-between; gap: 24px; padding-top: 24px; border-top: 1px solid rgba(248,248,243,.16); color: rgba(248,248,243,.48); font-size: 10px; }
+.footer-bottom { display: flex; justify-content: space-between; gap: 24px; padding-top: 24px; border-top: 1px solid rgba(248,248,243,.16); color: rgba(248,248,243,.54); font-size: 10px; }
 .footer-bottom > div { display: flex; gap: 20px; }
 
 @media (hover: hover) and (pointer: fine) {
@@ -554,8 +570,9 @@ img { display: block; max-width: 100%; }
   .nav-wrap { grid-template-columns: 1fr auto; }
   .mobile-toggle { justify-self: end; display: grid; width: 44px; height: 44px; place-content: center; gap: 6px; border: 0; background: transparent; cursor: pointer; }
   .mobile-toggle span { width: 22px; height: 1px; background: var(--ink); }
-  .mobile-menu { position: fixed; inset: var(--header-height) 0 auto; z-index: 58; padding: 18px 16px 22px; background: rgba(238,240,235,.98); border-bottom: 1px solid var(--line); }
-  .mobile-menu.is-open { display: grid; gap: 4px; }
+  .mobile-menu { position: fixed; inset: var(--header-height) 0 auto; z-index: 58; padding: 18px 16px 22px; overflow: hidden; background: rgba(238,240,235,.98); border-bottom: 1px solid var(--line); transform-origin: top center; will-change: transform, opacity, clip-path; }
+  .mobile-menu.is-rendered { display: grid; gap: 4px; }
+  .mobile-menu.is-closing { pointer-events: none; }
   .mobile-menu > a:not(.button) { padding: 12px 4px; font-size: 14px; font-weight: 650; }
   .mobile-menu .button { margin-top: 8px; }
 

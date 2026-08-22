@@ -116,6 +116,46 @@ test('shared CTA buttons use GSAP magnetic motion instead of basic CSS lift', ()
   expect(css).not.toContain('.button:hover { transform: translateY(-2px); }')
 })
 
+test('mobile critical bundle defers desktop and below-fold scroll libraries', () => {
+  const source = readFileSync(`${process.cwd()}/src/App.jsx`, 'utf8')
+
+  expect(source).not.toContain("import { ScrollTrigger } from 'gsap/ScrollTrigger'")
+  expect(source).not.toContain("import { SplitText } from 'gsap/SplitText'")
+  expect(source).not.toContain("import Lenis from 'lenis'")
+  expect(source).toContain("import('gsap/ScrollTrigger')")
+  expect(source).toContain("import('gsap/SplitText')")
+  expect(source).toContain("import('lenis')")
+})
+
+test('PageSpeed-critical fonts are self-hosted instead of render-blocking through Google Fonts', () => {
+  const html = readFileSync(`${process.cwd()}/index.html`, 'utf8')
+  const css = readFileSync(`${process.cwd()}/styles.css`, 'utf8')
+
+  expect(html).not.toContain('fonts.googleapis.com')
+  expect(html).not.toContain('fonts.gstatic.com')
+  expect(css).toContain('@font-face')
+  expect(css).toContain("url('/fonts/")
+})
+
+test('visible brand and language labels are included in their accessible names', () => {
+  render(<App />)
+
+  expect(screen.getByRole('link', { name: /Casa Raíz Latin American Cuisine/i })).toBeInTheDocument()
+  expect(screen.getAllByRole('button', { name: /^EN\b/i }).length).toBeGreaterThan(0)
+  expect(screen.getAllByRole('button', { name: /^ES\b/i }).length).toBeGreaterThan(0)
+})
+
+test('initially rendered images expose positive intrinsic dimensions', () => {
+  render(<App />)
+
+  const images = [...document.querySelectorAll('img')]
+  expect(images.length).toBeGreaterThan(10)
+  images.forEach((image) => {
+    expect(Number(image.getAttribute('width'))).toBeGreaterThan(0)
+    expect(Number(image.getAttribute('height'))).toBeGreaterThan(0)
+  })
+})
+
 test('critical hero media is responsive and high priority while secondary media is lazy', () => {
   const app = readFileSync(`${process.cwd()}/src/App.jsx`, 'utf8')
   const plates = readFileSync(`${process.cwd()}/src/PlateDeck.jsx`, 'utf8')
@@ -139,20 +179,23 @@ test('critical hero media is responsive and high priority while secondary media 
 
 test('below-fold GSAP setup is deferred until sections approach the viewport', () => {
   const source = readFileSync(`${process.cwd()}/src/App.jsx`, 'utf8')
+  const runtime = readFileSync(`${process.cwd()}/src/scroll-motion-runtime.jsx`, 'utf8')
 
-  expect(source).toContain('new IntersectionObserver')
-  expect(source).toContain('observeMotionTarget')
-  expect(source).toContain("rootMargin: '80% 0px'")
+  expect(runtime).toContain('new IntersectionObserver')
+  expect(runtime).toContain('observeMotionTarget')
+  expect(runtime).toContain("rootMargin = '80% 0px'")
   expect(source).toContain("node.dataset.motionDeferred = 'ready'")
 })
 
 test('Lenis only runs on desktop fine-pointer sessions and mobile anchors use native scrolling', () => {
   const source = readFileSync(`${process.cwd()}/src/App.jsx`, 'utf8')
+  const runtime = readFileSync(`${process.cwd()}/src/scroll-motion-runtime.jsx`, 'utf8')
 
   expect(source).toContain("const desktopViewport = window.matchMedia('(min-width: 900px)').matches")
   expect(source).toContain("const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches")
   expect(source).toContain('const useLenis = desktopViewport && finePointer')
-  expect(source).toContain('const lenis = useLenis ? new Lenis({')
+  expect(source).toContain("useLenis ? import('lenis') : Promise.resolve(null)")
+  expect(runtime).toContain('const lenis = useLenis && Lenis ? new Lenis({')
   expect(source).toContain('const scrollNativeTo = (element) => {')
   expect(source).toContain('window.requestAnimationFrame(step)')
   expect(source).toContain('nativeScrollFrame = window.requestAnimationFrame(step)')

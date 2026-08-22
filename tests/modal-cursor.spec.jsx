@@ -294,6 +294,67 @@ test('CTA magnetic motion is disabled for reduced motion and touch', async ({ br
   await touchContext.close()
 })
 
+test('initial mobile images expose intrinsic dimensions for stable PageSpeed layout', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    isMobile: true,
+  })
+  const page = await context.newPage()
+  await page.goto('http://localhost:5174/?motion=full')
+
+  const missingDimensions = await page.locator('img').evaluateAll((images) => images
+    .filter((image) => Number(image.getAttribute('width')) <= 0 || Number(image.getAttribute('height')) <= 0)
+    .map((image) => ({ alt: image.alt, src: image.currentSrc || image.src })))
+
+  expect(missingDimensions).toEqual([])
+  await context.close()
+})
+
+test('mobile navigation eases in and stays rendered through its close animation', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    isMobile: true,
+  })
+  const page = await context.newPage()
+  await page.goto('http://localhost:5174/?motion=full')
+
+  const toggle = page.getByRole('button', { name: /open menu/i })
+  const menu = page.locator('#mobile-menu')
+  const state = () => menu.evaluate((element) => {
+    const style = getComputedStyle(element)
+    const matrix = style.transform === 'none' ? null : new DOMMatrixReadOnly(style.transform)
+    return {
+      opacity: Number(style.opacity),
+      visibility: style.visibility,
+      y: matrix?.m42 ?? 0,
+    }
+  })
+
+  await toggle.tap()
+  await page.waitForTimeout(90)
+  const opening = await state()
+  expect(opening.visibility).toBe('visible')
+  expect(opening.opacity).toBeGreaterThan(0.05)
+  expect(opening.opacity).toBeLessThan(0.98)
+  expect(opening.y).toBeLessThan(0)
+
+  await page.waitForTimeout(520)
+  await expect.poll(async () => (await state()).opacity).toBeGreaterThan(0.99)
+
+  await toggle.tap()
+  await page.waitForTimeout(70)
+  const closing = await state()
+  expect(closing.visibility).toBe('visible')
+  expect(closing.opacity).toBeGreaterThan(0.05)
+  expect(closing.opacity).toBeLessThan(0.98)
+
+  await page.waitForTimeout(420)
+  await expect(menu).toBeHidden()
+  await context.close()
+})
+
 test('mobile internal navigation stays Lenis-free and lands on the target promptly', async ({ browser }) => {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },

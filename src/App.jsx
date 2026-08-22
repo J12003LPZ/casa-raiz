@@ -1,9 +1,9 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
 import { CustomEase } from 'gsap/CustomEase'
-import { SplitText } from 'gsap/SplitText'
-import Lenis from 'lenis'
+
+
 import { motion, registerMotionEases } from './motion.js'
 import { getInitialLanguage, LANGUAGE_STORAGE_KEY, translations } from './i18n.jsx'
 import PlateDeck from './PlateDeck.jsx'
@@ -11,15 +11,15 @@ import DrinksShowcase from './DrinksShowcase.jsx'
 import MenuHoverPreview from './MenuHoverPreview.jsx'
 import { unsplashSrcSet } from './image-performance.jsx'
 
-gsap.registerPlugin(ScrollTrigger, SplitText)
+
 registerMotionEases(gsap, CustomEase)
 
 function LanguageSwitch({ language, labels, onChange, disabled = false, className = '' }) {
   return (
     <div className={`language-switch ${className}`} data-language-switch data-language={language} role="group" aria-label={labels.label}>
       <span className="language-thumb" aria-hidden="true" />
-      <button type="button" className="language-option" aria-label={labels.english} aria-pressed={language === 'en'} disabled={disabled} onClick={() => onChange('en')}>EN</button>
-      <button type="button" className="language-option" aria-label={labels.spanish} aria-pressed={language === 'es'} disabled={disabled} onClick={() => onChange('es')}>ES</button>
+      <button type="button" className="language-option" aria-label={`EN — ${labels.english}`} aria-pressed={language === 'en'} disabled={disabled} onClick={() => onChange('en')}>EN</button>
+      <button type="button" className="language-option" aria-label={`ES — ${labels.spanish}`} aria-pressed={language === 'es'} disabled={disabled} onClick={() => onChange('es')}>ES</button>
     </div>
   )
 }
@@ -31,26 +31,6 @@ function getLanguageCopyTargets(node) {
     .filter((element) => !element.closest('[data-language-switch]'))
     .filter((element) => !element.closest('[aria-hidden="true"]'))
     .filter((element) => [...element.childNodes].some((child) => child.nodeType === 3 && child.textContent?.trim()))
-}
-
-function createScrollRefreshScheduler() {
-  let frame = null
-
-  const schedule = () => {
-    if (frame) return
-    frame = window.requestAnimationFrame(() => {
-      frame = null
-      ScrollTrigger.refresh()
-    })
-  }
-
-  const cancel = () => {
-    if (!frame) return
-    window.cancelAnimationFrame(frame)
-    frame = null
-  }
-
-  return { schedule, cancel }
 }
 
 function createNativeScroller(reduceMotion) {
@@ -106,95 +86,9 @@ function createNativeScroller(reduceMotion) {
 
 function setupResponsiveMotion(node, forceMotion) {
   const media = gsap.matchMedia()
-  const desktopMotionQuery = forceMotion
-    ? '(min-width: 900px)'
-    : '(min-width: 900px) and (prefers-reduced-motion: no-preference)'
   const cursorMotionQuery = forceMotion
     ? '(hover: hover) and (pointer: fine)'
     : '(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)'
-
-  media.add(desktopMotionQuery, () => {
-    gsap.utils.toArray('[data-parallax-media]').forEach((frame) => {
-      const image = frame.querySelector('img')
-      if (!image) return
-      gsap.fromTo(
-        image,
-        { yPercent: -5, scale: 1.065 },
-        {
-          yPercent: 5,
-          scale: 1.065,
-          ease: motion.ease.scrub,
-          scrollTrigger: {
-            trigger: frame,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1,
-          },
-        },
-      )
-    })
-
-    const menu = node.querySelector('#menu')
-    const viewport = node.querySelector('[data-menu-viewport]')
-    const track = node.querySelector('[data-menu-track]')
-    if (menu && viewport && track) {
-      const distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth)
-      gsap.to(track, {
-        x: () => -distance(),
-        ease: motion.ease.scrub,
-        scrollTrigger: {
-          trigger: menu,
-          start: 'top top',
-          end: () => `+=${Math.max(distance() * 1.3, window.innerHeight * 1.45)}`,
-          pin: true,
-          scrub: 0.9,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      })
-    }
-
-    const galleryCells = gsap.utils.toArray('.gallery-cell')
-    if (galleryCells.length) {
-      gsap.fromTo(
-        galleryCells,
-        {
-          y: (index) => index % 2 === 0 ? 96 : 142,
-          clipPath: 'inset(0 0 100% 0)',
-          scale: 0.96,
-        },
-        {
-          y: 0,
-          clipPath: 'inset(0 0 0% 0)',
-          scale: 1,
-          stagger: motion.stagger.text,
-          ease: motion.ease.scrub,
-          scrollTrigger: {
-            trigger: '.gallery-section',
-            start: 'top 92%',
-            end: 'top 28%',
-            scrub: 0.9,
-          },
-        },
-      )
-    }
-
-    const velocityTargets = gsap.utils.toArray('.experience-media, .gallery-cell')
-    const skewTo = velocityTargets.map((target) => gsap.quickTo(target, 'skewY', {
-      duration: motion.duration.base,
-      ease: motion.ease.cubicOut,
-    }))
-    const settle = gsap.delayedCall(0.08, () => skewTo.forEach((set) => set(0))).pause()
-    ScrollTrigger.create({
-      start: 0,
-      end: 'max',
-      onUpdate: (self) => {
-        const skew = gsap.utils.clamp(-3.5, 3.5, -self.getVelocity() / 850)
-        skewTo.forEach((set) => set(skew))
-        settle.restart(true)
-      },
-    })
-  })
 
   media.add(cursorMotionQuery, () => {
     const cursor = node.querySelector('[data-cursor]')
@@ -328,7 +222,10 @@ function setupResponsiveMotion(node, forceMotion) {
 
 export default function App() {
   const root = useRef(null)
+  const mobileMenuRef = useRef(null)
+  const scrollRuntimeRef = useRef(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [menuRendered, setMenuRendered] = useState(false)
   const [reservationShown, setReservationShown] = useState(false)
   const [newsletterShown, setNewsletterShown] = useState(false)
   const [language, setLanguage] = useState(getInitialLanguage)
@@ -384,7 +281,7 @@ export default function App() {
               languageTransitioningRef.current = false
               setLanguageIntent(null)
               setLanguageTransitioning(false)
-              ScrollTrigger.refresh()
+              scrollRuntimeRef.current?.refresh()
             },
           })
         })
@@ -396,11 +293,104 @@ export default function App() {
     document.documentElement.lang = language
     window.localStorage?.setItem(LANGUAGE_STORAGE_KEY, language)
     root.current?.setAttribute('data-language', language)
-    const refreshFrame = window.requestAnimationFrame?.(() => ScrollTrigger.refresh())
+    const refreshFrame = window.requestAnimationFrame?.(() => {
+      scrollRuntimeRef.current?.refreshHeadings()
+      scrollRuntimeRef.current?.refresh()
+    })
     return () => {
       if (refreshFrame) window.cancelAnimationFrame?.(refreshFrame)
     }
   }, [language])
+
+  useLayoutEffect(() => {
+    const menu = mobileMenuRef.current
+    if (!menu || !menuRendered) return undefined
+
+    const items = [...menu.children]
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      && !document.documentElement.classList.contains('motion-forced')
+
+    gsap.killTweensOf([menu, ...items])
+
+    const finishClose = () => {
+      gsap.set(menu, { clearProps: 'transform,opacity,visibility,clipPath' })
+      gsap.set(items, { clearProps: 'transform,opacity,visibility' })
+      setMenuRendered(false)
+    }
+
+    if (menuOpen) {
+      if (reduceMotion) {
+        gsap.fromTo(menu,
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.16, ease: 'none', clearProps: 'opacity,visibility' },
+        )
+        gsap.set(items, { clearProps: 'transform,opacity,visibility' })
+        return undefined
+      }
+
+      const timeline = gsap.timeline({ defaults: { overwrite: 'auto' } })
+      timeline
+        .fromTo(menu,
+          { autoAlpha: 0, y: -16, clipPath: 'inset(0 0 100% 0)' },
+          {
+            autoAlpha: 1,
+            y: 0,
+            clipPath: 'inset(0 0 0% 0)',
+            duration: 0.5,
+            ease: 'power4.out',
+            clearProps: 'transform,opacity,visibility,clipPath',
+          },
+          0,
+        )
+        .fromTo(items,
+          { opacity: 0, y: 9 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.38,
+            stagger: 0.04,
+            ease: 'power3.out',
+            clearProps: 'transform,opacity',
+          },
+          0.1,
+        )
+
+      return () => timeline.kill()
+    }
+
+    if (reduceMotion) {
+      const tween = gsap.to(menu, {
+        autoAlpha: 0,
+        duration: 0.12,
+        ease: 'none',
+        overwrite: 'auto',
+        onComplete: finishClose,
+      })
+      return () => tween.kill()
+    }
+
+    const timeline = gsap.timeline({
+      defaults: { overwrite: 'auto' },
+      onComplete: finishClose,
+    })
+    timeline
+      .to(items, {
+        opacity: 0,
+        y: -5,
+        duration: 0.18,
+        stagger: { each: 0.025, from: 'end' },
+        ease: 'power2.in',
+      }, 0)
+      .to(menu, {
+        autoAlpha: 0,
+        y: -10,
+        clipPath: 'inset(0 0 18% 0)',
+        duration: 0.32,
+        ease: 'power2.in',
+      }, 0)
+
+    return () => timeline.kill()
+  }, [menuOpen, menuRendered])
 
   useLayoutEffect(() => {
     const node = root.current
@@ -413,7 +403,6 @@ export default function App() {
     const desktopViewport = window.matchMedia('(min-width: 900px)').matches
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches
     const useLenis = desktopViewport && finePointer
-    const { schedule: scheduleScrollRefresh, cancel: cancelScrollRefresh } = createScrollRefreshScheduler()
 
     if (forceMotion) document.documentElement.classList.add('motion-forced')
     if (!motionSupported || reduceMotion) {
@@ -424,43 +413,13 @@ export default function App() {
 
     node.dataset.motionStatus = 'booting'
     node.dataset.motionPreference = forceMotion ? 'full' : 'system'
-
-    const lenis = useLenis ? new Lenis({
-      duration: 1.1,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      syncTouch: false,
-    })
-    : null
-    lenis?.on('scroll', ScrollTrigger.update)
-    const raf = (time) => lenis?.raf(time * 1000)
-    if (lenis) gsap.ticker.add(raf)
-    if (lenis) gsap.ticker.lagSmoothing(0)
+    node.dataset.motionDeferred = 'pending'
 
     const { scrollNativeTo, stopNativeScroll } = createNativeScroller(reduceMotion)
-    const motionObservers = []
-    const deferredContexts = []
-    const observeMotionTarget = (target, setup, rootMargin = '80% 0px') => {
-      if (!target) return
-      let activated = false
-      const activate = () => {
-        if (activated) return
-        activated = true
-        deferredContexts.push(gsap.context(setup, node))
-      }
-      if (typeof window.IntersectionObserver === 'undefined') {
-        activate()
-        return
-      }
-      const observer = new IntersectionObserver((entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return
-        observer.disconnect()
-        activate()
-        scheduleScrollRefresh()
-      }, { rootMargin, threshold: 0.01 })
-      observer.observe(target)
-      motionObservers.push(observer)
-    }
+    let lenis = null
+    let firstFrame = null
+    let secondFrame = null
+    let cancelled = false
 
     const context = gsap.context(() => {
       gsap.set('.desktop-actions > *', { clearProps: 'transform,translate,rotate,scale' })
@@ -471,39 +430,10 @@ export default function App() {
         .from('[data-hero-clip]', { clipPath: 'inset(0 100% 0 0)', duration: motion.duration.epic, ease: motion.ease.inOut }, 0)
         .from('[data-hero-image]', { scale: 1.18, duration: 2, ease: motion.ease.quintOut }, 0)
         .from('[data-hero-line] > span', { yPercent: 116, rotate: 2, transformOrigin: 'left bottom', duration: 1.25, stagger: motion.stagger.text, ease: motion.ease.expoOut }, 0.18)
-        .from('[data-hero-detail]', { y: motion.travel.small, autoAlpha: 0, duration: motion.duration.reveal, stagger: motion.stagger.base, ease: motion.ease.cubicOut }, 0.48)
-
-      const header = node.querySelector('#site-header')
-      ScrollTrigger.create({ start: 24, end: 'max', onUpdate: (self) => header?.classList.toggle('header-scrolled', self.scroll() > 24) })
-      gsap.to('[data-hero-image]', {
-        yPercent: 8,
-        scale: 1.055,
-        ease: motion.ease.scrub,
-        scrollTrigger: { trigger: '#home', start: 'top top', end: 'bottom top', scrub: 0.9 },
-      })
-
-      gsap.utils.toArray('[data-motion-reveal]').forEach((element) => {
-        observeMotionTarget(element, () => {
-          gsap.fromTo(element,
-            { y: motion.travel.large, autoAlpha: 0.16, filter: 'blur(7px)' },
-            { y: 0, autoAlpha: 1, filter: 'blur(0px)', ease: motion.ease.scrub, scrollTrigger: { trigger: element, start: 'top 92%', end: 'top 46%', scrub: 0.9 } },
-          )
-        })
-      })
-
-      const bar = node.querySelector('#bar')
-      if (bar) {
-        observeMotionTarget(bar, () => {
-          gsap.fromTo(bar,
-            { '--bar-bg': '#e6e9e3', '--bar-ink': '#172019', '--bar-muted': '#626b64', '--bar-line': 'rgba(23, 32, 25, 0.16)' },
-            { '--bar-bg': '#26362c', '--bar-ink': '#f8f8f3', '--bar-muted': 'rgba(248, 248, 243, 0.66)', '--bar-line': 'rgba(248, 248, 243, 0.2)', ease: motion.ease.scrub, scrollTrigger: { trigger: bar, start: 'top 90%', end: 'top 38%', scrub: 0.8 } },
-          )
-        }, '100% 0px')
-      }
+        .from('[data-hero-detail]', { y: motion.travel.small, filter: 'blur(3px)', duration: motion.duration.reveal, stagger: motion.stagger.base, ease: motion.ease.cubicOut, clearProps: 'filter' }, 0.48)
 
       return setupResponsiveMotion(node, forceMotion)
     }, node)
-    node.dataset.motionDeferred = 'ready'
 
     const internalLinks = [...node.querySelectorAll('a[href^="#"]')]
     const clickHandlers = internalLinks.map((link) => {
@@ -524,96 +454,60 @@ export default function App() {
       return [link, handler]
     })
 
-    const refresh = scheduleScrollRefresh
-    document.fonts?.ready?.then(refresh)
-    window.addEventListener('load', refresh, { once: true })
-    node.dataset.motionStatus = 'ready'
+    firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(async () => {
+        try {
+          const [{ ScrollTrigger }, { SplitText }, { setupScrollMotionRuntime }, lenisModule] = await Promise.all([
+            import('gsap/ScrollTrigger'),
+            import('gsap/SplitText'),
+            import('./scroll-motion-runtime.jsx'),
+            useLenis ? import('lenis') : Promise.resolve(null),
+          ])
+          if (cancelled) return
+
+          gsap.registerPlugin(ScrollTrigger, SplitText)
+          const runtime = setupScrollMotionRuntime({
+            node,
+            gsap,
+            motion,
+            forceMotion,
+            ScrollTrigger,
+            SplitText,
+            Lenis: lenisModule?.default ?? null,
+            useLenis,
+          })
+          if (cancelled) {
+            runtime.destroy()
+            return
+          }
+
+          scrollRuntimeRef.current = runtime
+          lenis = runtime.lenis
+          node.dataset.motionDeferred = 'ready'
+          node.dataset.motionStatus = 'ready'
+        } catch {
+          if (cancelled) return
+          node.dataset.motionDeferred = 'failed'
+          node.dataset.motionStatus = 'critical-only'
+        }
+      })
+    })
 
     return () => {
-      window.removeEventListener('load', refresh)
-      cancelScrollRefresh()
+      cancelled = true
+      if (firstFrame) window.cancelAnimationFrame(firstFrame)
+      if (secondFrame) window.cancelAnimationFrame(secondFrame)
       stopNativeScroll()
       clickHandlers.forEach(([link, handler]) => link.removeEventListener('click', handler))
-      motionObservers.forEach((observer) => observer.disconnect())
-      deferredContexts.forEach((deferredContext) => deferredContext.revert())
+      scrollRuntimeRef.current?.destroy()
+      scrollRuntimeRef.current = null
       context.revert()
-      gsap.ticker.remove(raf)
-      lenis?.destroy()
       document.documentElement.classList.remove('motion-forced')
       delete node.dataset.motionStatus
       delete node.dataset.motionPreference
       delete node.dataset.motionDeferred
     }
   }, [])
-
-
-
-      useLayoutEffect(() => {
-      const node = root.current
-      if (!node || node.dataset.motionStatus !== 'ready') return undefined
-
-      const refreshedSplits = []
-      const animations = []
-      const observers = []
-
-      const initializeHeading = (heading) => {
-        if (heading.querySelector('.split-line')) return
-
-        const split = SplitText.create(heading, {
-          type: 'lines',
-          linesClass: 'split-line',
-          mask: 'lines',
-          aria: 'auto',
-        })
-        refreshedSplits.push(split)
-
-        const alreadyEntered = heading.getBoundingClientRect().top <= window.innerHeight * 0.89
-        if (alreadyEntered) {
-          gsap.set(split.lines, { yPercent: 0, rotate: 0, autoAlpha: 1 })
-          return
-        }
-
-        animations.push(gsap.from(split.lines, {
-          yPercent: 116,
-          rotate: 2,
-          transformOrigin: 'left bottom',
-          duration: 1.25,
-          stagger: motion.stagger.text,
-          ease: motion.ease.expoOut,
-          scrollTrigger: {
-            trigger: heading,
-            start: 'top 89%',
-            once: true,
-          },
-        }))
-      }
-
-      node.querySelectorAll('main h2').forEach((heading) => {
-        if (typeof window.IntersectionObserver === 'undefined') {
-          initializeHeading(heading)
-          return
-        }
-
-        const observer = new IntersectionObserver((entries) => {
-          if (!entries.some((entry) => entry.isIntersecting)) return
-          observer.disconnect()
-          initializeHeading(heading)
-          ScrollTrigger.refresh()
-        }, { rootMargin: '80% 0px', threshold: 0.01 })
-
-        observer.observe(heading)
-        observers.push(observer)
-      })
-
-      return () => {
-        observers.forEach((observer) => observer.disconnect())
-        animations.forEach((animation) => animation.kill())
-        refreshedSplits.forEach((split) => {
-          split.revert()
-          split.kill()
-        })
-      }
-    }, [language])
 
   return (
     <div ref={root} className="site-root" data-motion-root>
@@ -622,7 +516,7 @@ export default function App() {
 
       <header id="site-header" className="site-header">
         <div className="shell nav-wrap">
-          <a href="#home" className="brand" aria-label={c.nav.homeLabel}>
+          <a href="#home" className="brand">
             <span className="brand-main">Casa Raíz</span>
             <span className="brand-sub">{c.brandSubtitle}</span>
           </a>
@@ -642,15 +536,28 @@ export default function App() {
           <button
             className="mobile-toggle"
             aria-label={c.nav.mobileOpen}
+            aria-controls="mobile-menu"
             aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
+            onClick={() => {
+              if (menuOpen) {
+                setMenuOpen(false)
+              } else {
+                setMenuRendered(true)
+                setMenuOpen(true)
+              }
+            }}
           >
             <span />
             <span />
           </button>
         </div>
 
-        <div id="mobile-menu" className={`mobile-menu ${menuOpen ? 'is-open' : 'hidden'}`}>
+        <div
+          id="mobile-menu"
+          ref={mobileMenuRef}
+          className={`mobile-menu ${menuRendered ? 'is-rendered' : 'hidden'} ${menuOpen ? 'is-open' : 'is-closing'}`}
+          aria-hidden={!menuOpen}
+        >
           <a href="#menu">{c.nav.menu}</a>
           <a href="#story">{c.nav.story}</a>
           <a href="#events">{c.nav.events}</a>
@@ -665,7 +572,7 @@ export default function App() {
           <div className="hero-media" data-hero-media data-hero-panel="media" data-hero-clip>
             <img
               data-hero-image
-              src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1600&q=90"
+              width="1200" height="800" src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1600&q=90"
               srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1600&q=90')}
               sizes="(min-width: 900px) 54vw, calc(100vw - 32px)"
               fetchPriority="high"
@@ -726,10 +633,10 @@ export default function App() {
 
             <div className="story-media-stack">
               <div className="media-frame story-main-media" data-parallax-media data-motion-reveal>
-                <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1200&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1200&q=88')} sizes="(min-width: 900px) 42vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.story.mainAlt} />
+                <img width="1200" height="800" src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1200&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1200&q=88')} sizes="(min-width: 900px) 42vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.story.mainAlt} />
               </div>
               <div className="media-frame story-detail-media" data-parallax-media data-motion-reveal>
-                <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=960&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=960&q=88')} sizes="(min-width: 900px) 24vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.story.detailAlt} />
+                <img width="1200" height="800" src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=960&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=960&q=88')} sizes="(min-width: 900px) 24vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.story.detailAlt} />
               </div>
             </div>
           </div>
@@ -741,16 +648,16 @@ export default function App() {
               <h2 key={language}>{c.experience.title}</h2>
               <p>{c.experience.body}</p>
             </div>
-            <div className="experience-media large" data-parallax-media data-motion-reveal><img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=88')} sizes="(min-width: 900px) 45vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.experience.diningAlt} /></div>
-            <div className="experience-media tall" data-parallax-media data-motion-reveal><img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=960&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=960&q=88')} sizes="(min-width: 900px) 24vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.experience.cocktailAlt} /></div>
-            <div className="experience-media wide" data-parallax-media data-motion-reveal><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=88')} sizes="(min-width: 900px) 34vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.experience.guestsAlt} /></div>
+            <div className="experience-media large" data-parallax-media data-motion-reveal><img width="1200" height="800" src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=88')} sizes="(min-width: 900px) 45vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.experience.diningAlt} /></div>
+            <div className="experience-media tall" data-parallax-media data-motion-reveal><img width="1200" height="800" src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=960&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=960&q=88')} sizes="(min-width: 900px) 24vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.experience.cocktailAlt} /></div>
+            <div className="experience-media wide" data-parallax-media data-motion-reveal><img width="1200" height="800" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=88')} sizes="(min-width: 900px) 34vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.experience.guestsAlt} /></div>
           </div>
         </section>
 
         <section id="chef" className="section surface-main">
           <div className="shell chef-grid">
             <div className="chef-portrait media-frame" data-parallax-media data-motion-reveal>
-              <img src="https://images.unsplash.com/photo-1583394293214-28ded15ee548?auto=format&fit=crop&w=1200&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1583394293214-28ded15ee548?auto=format&fit=crop&w=1200&q=88')} sizes="(min-width: 900px) 45vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.chef.alt} />
+              <img width="1200" height="800" src="https://images.unsplash.com/photo-1583394293214-28ded15ee548?auto=format&fit=crop&w=1200&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1583394293214-28ded15ee548?auto=format&fit=crop&w=1200&q=88')} sizes="(min-width: 900px) 45vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.chef.alt} />
             </div>
             <div className="chef-copy" data-motion-reveal>
               <p className="section-kicker">{c.chef.kicker}</p>
@@ -816,7 +723,7 @@ export default function App() {
         <section id="events" className="section surface-deep">
           <div className="shell events-grid">
             <div className="events-media media-frame" data-parallax-media data-motion-reveal>
-              <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=88')} sizes="(min-width: 900px) 48vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.events.alt} />
+              <img width="1200" height="800" src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=88')} sizes="(min-width: 900px) 48vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.events.alt} />
             </div>
             <div className="events-copy" data-motion-reveal>
               <h2 key={language}>{c.events.title}</h2>
@@ -850,7 +757,7 @@ export default function App() {
               ['photo-1547592180-85f173990554', 'Main dish'],
             ].map(([photo, alt], index) => (
               <div className={`gallery-cell gallery-cell-${index + 1}`} data-parallax-media key={photo}>
-                <img src={`https://images.unsplash.com/${photo}?auto=format&fit=crop&w=960&q=84`} srcSet={unsplashSrcSet(`https://images.unsplash.com/${photo}?auto=format&fit=crop&w=960&q=84`)} sizes="(min-width: 900px) 25vw, 50vw" loading="lazy" decoding="async" alt={c.gallery.alts[index]} />
+                <img width="1200" height="800" src={`https://images.unsplash.com/${photo}?auto=format&fit=crop&w=960&q=84`} srcSet={unsplashSrcSet(`https://images.unsplash.com/${photo}?auto=format&fit=crop&w=960&q=84`)} sizes="(min-width: 900px) 25vw, 50vw" loading="lazy" decoding="async" alt={c.gallery.alts[index]} />
               </div>
             ))}
           </div>
@@ -866,7 +773,7 @@ export default function App() {
               <a className="text-link" href="https://maps.google.com/?q=123+Atlantic+Ave+Brooklyn+NY" target="_blank" rel="noreferrer">{c.visit.directions}</a>
             </div>
             <div className="visit-media media-frame" data-parallax-media data-motion-reveal>
-              <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=88')} sizes="(min-width: 900px) 48vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.visit.alt} />
+              <img width="1200" height="800" src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=88" srcSet={unsplashSrcSet('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=88')} sizes="(min-width: 900px) 48vw, calc(100vw - 32px)" loading="lazy" decoding="async" alt={c.visit.alt} />
             </div>
           </div>
         </section>

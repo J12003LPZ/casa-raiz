@@ -115,6 +115,8 @@ export default function DrinksShowcase({ drinks, label }) {
         {drinks.map((drink, index) => (
           <figure className="drink-image-layer" key={`${drink.name}-${drink.image}`}>
             <img
+              width="1200"
+              height="800"
               ref={(node) => { imageRefs.current[index] = node }}
               src={drink.image}
               alt={drink.alt}
