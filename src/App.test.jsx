@@ -23,6 +23,14 @@ test('mobile menu button toggles navigation visibility', () => {
   expect(menu).not.toHaveClass('hidden')
 })
 
+test('footer credits Leonardo Lopez and links to his GitHub profile', () => {
+  render(<App />)
+
+  const credit = screen.getByRole('link', { name: /Leonardo Lopez/i })
+  expect(credit).toHaveAttribute('href', 'https://github.com/J12003LPZ')
+  expect(credit).toHaveAttribute('target', '_blank')
+})
+
 test('reservation button shows status note', () => {
   render(<App />)
 

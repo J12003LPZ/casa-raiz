@@ -800,7 +800,13 @@ export default function App() {
           <div><h3>{c.footer.information}</h3><p>123 Atlantic Ave<br />Brooklyn, NY 11201</p><p>(718) 555-1234<br />hola@casaraizbk.com</p></div>
           <div><h3>{c.footer.hours}</h3><p>{c.visit.schedule[0]}<br />{c.visit.schedule[1]}</p><LanguageSwitch language={visualLanguage} labels={c.language} onChange={changeLanguage} disabled={languageTransitioning} className="footer-language-switch" /></div>
         </div>
-        <div className="shell footer-bottom"><p>{c.footer.rights}</p><div><a href="#">{c.footer.accessibility}</a><a href="#">{c.footer.privacy}</a><a href="#">{c.footer.terms}</a></div></div>
+        <div className="shell footer-bottom">
+          <div className="footer-meta">
+            <p>{c.footer.rights}</p>
+            <p className="footer-credit">Made by <a href="https://github.com/J12003LPZ" target="_blank" rel="noreferrer">Leonardo Lopez</a></p>
+          </div>
+          <div className="footer-legal"><a href="#">{c.footer.accessibility}</a><a href="#">{c.footer.privacy}</a><a href="#">{c.footer.terms}</a></div>
+        </div>
       </footer>
     </div>
   )
