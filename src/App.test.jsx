@@ -124,15 +124,16 @@ test('shared CTA buttons use GSAP magnetic motion instead of basic CSS lift', ()
   expect(css).not.toContain('.button:hover { transform: translateY(-2px); }')
 })
 
-test('mobile critical bundle defers desktop and below-fold scroll libraries', () => {
+test('production motion runtime registers GSAP plugins eagerly and keeps Lenis optional', () => {
   const source = readFileSync(`${process.cwd()}/src/App.jsx`, 'utf8')
 
-  expect(source).not.toContain("import { ScrollTrigger } from 'gsap/ScrollTrigger'")
-  expect(source).not.toContain("import { SplitText } from 'gsap/SplitText'")
+  expect(source).toContain("import { ScrollTrigger } from 'gsap/ScrollTrigger'")
+  expect(source).toContain("import { SplitText } from 'gsap/SplitText'")
+  expect(source).toContain("import { setupScrollMotionRuntime } from './scroll-motion-runtime.jsx'")
+  expect(source).toContain('gsap.registerPlugin(ScrollTrigger, SplitText)')
   expect(source).not.toContain("import Lenis from 'lenis'")
-  expect(source).toContain("import('gsap/ScrollTrigger')")
-  expect(source).toContain("import('gsap/SplitText')")
-  expect(source).toContain("import('lenis')")
+  expect(source).toContain("await import('lenis')")
+  expect(source).toContain("Lenis failed to load; continuing with native scrolling.")
 })
 
 test('PageSpeed-critical fonts are self-hosted instead of render-blocking through Google Fonts', () => {
@@ -202,7 +203,8 @@ test('Lenis only runs on desktop fine-pointer sessions and mobile anchors use na
   expect(source).toContain("const desktopViewport = window.matchMedia('(min-width: 900px)').matches")
   expect(source).toContain("const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches")
   expect(source).toContain('const useLenis = desktopViewport && finePointer')
-  expect(source).toContain("useLenis ? import('lenis') : Promise.resolve(null)")
+  expect(source).toContain("const lenisModule = await import('lenis')")
+  expect(source).toContain('useLenis: useLenis && Boolean(Lenis)')
   expect(runtime).toContain('const lenis = useLenis && Lenis ? new Lenis({')
   expect(source).toContain('const scrollNativeTo = (element) => {')
   expect(source).toContain('window.requestAnimationFrame(step)')

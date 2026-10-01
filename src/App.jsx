@@ -1,10 +1,11 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
-
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { CustomEase } from 'gsap/CustomEase'
-
+import { SplitText } from 'gsap/SplitText'
 
 import { motion, registerMotionEases } from './motion.js'
+import { setupScrollMotionRuntime } from './scroll-motion-runtime.jsx'
 import { getInitialLanguage, LANGUAGE_STORAGE_KEY, translations } from './i18n.jsx'
 import PlateDeck from './PlateDeck.jsx'
 import DrinksShowcase from './DrinksShowcase.jsx'
@@ -12,6 +13,7 @@ import MenuHoverPreview from './MenuHoverPreview.jsx'
 import { unsplashSrcSet } from './image-performance.jsx'
 
 
+gsap.registerPlugin(ScrollTrigger, SplitText)
 registerMotionEases(gsap, CustomEase)
 
 function LanguageSwitch({ language, labels, onChange, disabled = false, className = '' }) {
@@ -417,8 +419,7 @@ export default function App() {
 
     const { scrollNativeTo, stopNativeScroll } = createNativeScroller(reduceMotion)
     let lenis = null
-    let firstFrame = null
-    let secondFrame = null
+    let runtimeBootFrame = null
     let cancelled = false
 
     const context = gsap.context(() => {
@@ -454,49 +455,53 @@ export default function App() {
       return [link, handler]
     })
 
-    firstFrame = window.requestAnimationFrame(() => {
-      secondFrame = window.requestAnimationFrame(async () => {
+    const initializeScrollMotion = async () => {
+      let Lenis = null
+
+      if (useLenis) {
         try {
-          const [{ ScrollTrigger }, { SplitText }, { setupScrollMotionRuntime }, lenisModule] = await Promise.all([
-            import('gsap/ScrollTrigger'),
-            import('gsap/SplitText'),
-            import('./scroll-motion-runtime.jsx'),
-            useLenis ? import('lenis') : Promise.resolve(null),
-          ])
-          if (cancelled) return
-
-          gsap.registerPlugin(ScrollTrigger, SplitText)
-          const runtime = setupScrollMotionRuntime({
-            node,
-            gsap,
-            motion,
-            forceMotion,
-            ScrollTrigger,
-            SplitText,
-            Lenis: lenisModule?.default ?? null,
-            useLenis,
-          })
-          if (cancelled) {
-            runtime.destroy()
-            return
-          }
-
-          scrollRuntimeRef.current = runtime
-          lenis = runtime.lenis
-          node.dataset.motionDeferred = 'ready'
-          node.dataset.motionStatus = 'ready'
-        } catch {
-          if (cancelled) return
-          node.dataset.motionDeferred = 'failed'
-          node.dataset.motionStatus = 'critical-only'
+          const lenisModule = await import('lenis')
+          Lenis = lenisModule?.default ?? null
+        } catch (error) {
+          console.warn('[motion] Lenis failed to load; continuing with native scrolling.', error)
         }
-      })
-    })
+      }
+
+      if (cancelled) return
+
+      try {
+        const runtime = setupScrollMotionRuntime({
+          node,
+          gsap,
+          motion,
+          forceMotion,
+          ScrollTrigger,
+          SplitText,
+          Lenis,
+          useLenis: useLenis && Boolean(Lenis),
+        })
+        if (cancelled) {
+          runtime.destroy()
+          return
+        }
+
+        scrollRuntimeRef.current = runtime
+        lenis = runtime.lenis
+        node.dataset.motionDeferred = 'ready'
+        node.dataset.motionStatus = 'ready'
+      } catch (error) {
+        if (cancelled) return
+        console.error('[motion] Failed to initialize scroll animations.', error)
+        node.dataset.motionDeferred = 'failed'
+        node.dataset.motionStatus = 'critical-only'
+      }
+    }
+
+    runtimeBootFrame = window.requestAnimationFrame(initializeScrollMotion)
 
     return () => {
       cancelled = true
-      if (firstFrame) window.cancelAnimationFrame(firstFrame)
-      if (secondFrame) window.cancelAnimationFrame(secondFrame)
+      if (runtimeBootFrame) window.cancelAnimationFrame(runtimeBootFrame)
       stopNativeScroll()
       clickHandlers.forEach(([link, handler]) => link.removeEventListener('click', handler))
       scrollRuntimeRef.current?.destroy()
