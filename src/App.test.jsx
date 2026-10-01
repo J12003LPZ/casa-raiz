@@ -378,7 +378,7 @@ test('GSAP runtime initializes and creates masked heading lines', async () => {
   }
 })
 
-test('full-motion URL explicitly overrides the system reduced-motion preference', async () => {
+test('default URL forces full GSAP motion even when the OS prefers reduced motion', async () => {
   const originalResizeObserver = globalThis.ResizeObserver
   const originalMatchMedia = window.matchMedia
   const originalScrollTo = window.scrollTo
@@ -400,7 +400,7 @@ test('full-motion URL explicitly overrides the system reduced-motion preference'
     dispatchEvent() { return false },
   })
   window.scrollTo = () => {}
-  window.history.replaceState({}, '', '/?motion=full')
+  window.history.replaceState({}, '', '/')
 
   const view = render(<App />)
 
@@ -421,6 +421,44 @@ test('full-motion URL explicitly overrides the system reduced-motion preference'
   }
 
   expect(document.documentElement).not.toHaveClass('motion-forced')
+})
+
+test('system motion mode still respects the OS reduced-motion preference', () => {
+  const originalResizeObserver = globalThis.ResizeObserver
+  const originalMatchMedia = window.matchMedia
+  const originalUrl = window.location.href
+
+  globalThis.ResizeObserver = class ResizeObserverMock {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+  window.matchMedia = (query) => ({
+    matches: query === '(prefers-reduced-motion: reduce)',
+    media: query,
+    onchange: null,
+    addListener() {},
+    removeListener() {},
+    addEventListener() {},
+    removeEventListener() {},
+    dispatchEvent() { return false },
+  })
+  window.history.replaceState({}, '', '/?motion=system')
+
+  const view = render(<App />)
+
+  try {
+    const root = view.container.querySelector('[data-motion-root]')
+    expect(root).toHaveAttribute('data-motion-status', 'reduced')
+    expect(root).not.toHaveAttribute('data-motion-preference')
+    expect(document.documentElement).not.toHaveClass('motion-forced')
+  } finally {
+    view.unmount()
+    window.matchMedia = originalMatchMedia
+    window.history.replaceState({}, '', originalUrl)
+    if (originalResizeObserver) globalThis.ResizeObserver = originalResizeObserver
+    else delete globalThis.ResizeObserver
+  }
 })
 
 test('language changes keep SplitText heading structure intact when motion is active', async () => {

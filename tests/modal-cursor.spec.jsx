@@ -134,7 +134,7 @@ test('every house menu row maps to its own preview content', async ({ browser })
     reducedMotion: 'reduce',
   })
   const page = await context.newPage()
-  await page.goto('http://localhost:5174/')
+  await page.goto('http://localhost:5174/?motion=system')
   await page.locator('#menu').scrollIntoViewIfNeeded()
 
   const rows = page.locator('[data-menu-row]')
@@ -164,7 +164,7 @@ test('house menu preview uses opacity-only motion when reduced motion is request
     reducedMotion: 'reduce',
   })
   const page = await context.newPage()
-  await page.goto('http://localhost:5174/')
+  await page.goto('http://localhost:5174/?motion=system')
   await page.locator('#menu').scrollIntoViewIfNeeded()
 
   const empanadas = page.getByRole('button', { name: /empanadas de hongos/i })
@@ -213,13 +213,15 @@ test('house menu preview supports touch switching and tap-outside dismissal', as
   await context.close()
 })
 
-test('CTA buttons use magnetic GSAP motion and settle cleanly', async ({ page }) => {
+test('CTA buttons use magnetic GSAP motion and settle cleanly on the default production URL', async ({ page }) => {
   const consoleErrors = []
   page.on('console', (message) => {
     if (message.type() === 'error') consoleErrors.push(`${message.text()} @ ${message.location().url || 'unknown'}`)
   })
 
-  await page.goto('http://localhost:5174/?motion=full')
+  await page.goto('http://localhost:5174/')
+  await expect(page.locator('[data-motion-root]')).toHaveAttribute('data-motion-preference', 'full')
+  await expect(page.locator('[data-motion-root]')).toHaveAttribute('data-motion-status', 'ready')
   const button = page.locator('.hero-actions .button-primary')
   const label = button.locator('.button-label')
   await expect(button).toHaveAttribute('data-cta-motion', 'ready')
@@ -277,7 +279,7 @@ test('CTA buttons use magnetic GSAP motion and settle cleanly', async ({ page })
 test('CTA magnetic motion is disabled for reduced motion and touch', async ({ browser }) => {
   const reducedContext = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' })
   const reducedPage = await reducedContext.newPage()
-  await reducedPage.goto('http://localhost:5174/')
+  await reducedPage.goto('http://localhost:5174/?motion=system')
   const reducedButton = reducedPage.locator('.hero-actions .button-primary')
   await expect(reducedButton).not.toHaveAttribute('data-cta-motion', 'ready')
   await reducedButton.hover()

@@ -399,9 +399,11 @@ export default function App() {
     if (!node) return undefined
 
     const motionSupported = typeof window.matchMedia === 'function' && typeof window.ResizeObserver !== 'undefined'
+    const requestedMotion = new URLSearchParams(window.location.search).get('motion')
+    const motionPreference = ['full', 'system', 'reduce'].includes(requestedMotion) ? requestedMotion : 'full'
     const systemReduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-    const forceMotion = new URLSearchParams(window.location.search).get('motion') === 'full'
-    const reduceMotion = systemReduceMotion && !forceMotion
+    const forceMotion = motionPreference === 'full'
+    const reduceMotion = motionPreference === 'reduce' || (motionPreference === 'system' && systemReduceMotion)
     const desktopViewport = window.matchMedia('(min-width: 900px)').matches
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches
     const useLenis = desktopViewport && finePointer
@@ -414,7 +416,7 @@ export default function App() {
     }
 
     node.dataset.motionStatus = 'booting'
-    node.dataset.motionPreference = forceMotion ? 'full' : 'system'
+    node.dataset.motionPreference = motionPreference
     node.dataset.motionDeferred = 'pending'
 
     const { scrollNativeTo, stopNativeScroll } = createNativeScroller(reduceMotion)
